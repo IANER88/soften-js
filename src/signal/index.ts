@@ -1,8 +1,6 @@
 import Signal, { Execute } from "./signal";
-import SignalList from './signal-list'
 export {
-  Signal,
-  SignalList,
+  Signal
 }
 
 export type {

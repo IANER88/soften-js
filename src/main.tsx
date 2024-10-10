@@ -1,15 +1,3 @@
-import { createRoot, useDarkScheme } from ".";
-
-function App() {
-
-  const scheme = useDarkScheme();
-  console.log(scheme);
-
-  return (
-    <div>
-
-    </div>  
-  )
-}
-
+import { createRoot, useDarkScheme, useSignal } from ".";
+import App from "./app";
 createRoot(<App />).mount('#app');

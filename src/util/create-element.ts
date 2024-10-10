@@ -13,7 +13,6 @@ export type Component = [
 export type SoftenComponent = (() => Component);
 
 export default function createElement(component: SoftenComponent) {
-
   const execute = (content?: Element) => {
     const render = (node) => {
       const [
@@ -131,6 +130,5 @@ export default function createElement(component: SoftenComponent) {
     subscriber: null,
     determines: new Set(),
   }
-
   return execute();
 }

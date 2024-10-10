@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import { join } from 'path'
 import dts from 'vite-plugin-dts'
 import path from 'path';
-import soften from 'vite-plugin-soften'
+import soften from './soften'
 export default defineConfig({
   plugins: [
     dts({
