@@ -26,6 +26,10 @@
     "./jsx-runtime": {
       "types": "./dist/types/jsx.d.ts",
       "default": "./dist/soften.js"
+    },
+    "./jsx-dev-runtime": {
+      "types": "./dist/types/jsx.d.ts",
+      "default": "./dist/soften.js"
     }
   },
   "files": [
