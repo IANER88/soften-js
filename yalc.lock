@@ -1,0 +1,9 @@
+{
+  "version": "v1",
+  "packages": {
+    "soften-dom": {
+      "signature": "4021ae7a428bf6d8984d236b9abeeb54",
+      "file": true
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": true,
+  },
+  // 包含的路径里的文件，就是需要生成的声明文件
+  "include": [
+    "src"
+  ]
+}

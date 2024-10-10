@@ -1,0 +1,37 @@
+{
+  "name": "soften-js",
+  "private": false,
+  "version": "1.0.3",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.5",
+    "typescript": "^5.5.3",
+    "vite": "^5.4.1"
+  },
+  "perivate": false,
+  "main": "./dist/soften.cjs",
+  "module": "./dist/soften.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/soften.cjs",
+      "import": "./dist/soften.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./jsx-runtime": {
+      "types": "./dist/types/jsx.d.ts",
+      "default": "./dist/soften.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "vite-plugin-dts": "^4.2.3"
+  }
+}
