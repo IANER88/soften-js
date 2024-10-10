@@ -1,7 +1,7 @@
 {
   "name": "soften-js",
   "private": false,
-  "version": "1.0.3",
+  "version": "1.0.4",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -36,6 +36,7 @@
     "dist"
   ],
   "dependencies": {
-    "vite-plugin-dts": "^4.2.3"
+    "vite-plugin-dts": "^4.2.3",
+    "vite-plugin-soften": "^1.0.3"
   }
 }

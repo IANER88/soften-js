@@ -2,12 +2,14 @@ import { defineConfig } from 'vite';
 import { join } from 'path'
 import dts from 'vite-plugin-dts'
 import path from 'path';
+import soften from 'vite-plugin-soften'
 export default defineConfig({
   plugins: [
     dts({
       include: ['src/**/*'],
       copyDtsFiles: true,
-    })
+    }),
+    soften(),
   ],
   resolve: {
     alias: {
@@ -23,7 +25,7 @@ export default defineConfig({
       formats: ['es', 'cjs'],
     },
     rollupOptions: {
-      external: [],
+      external: ['vite-plugin-soften'],
     },
   },
 })

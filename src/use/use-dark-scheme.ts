@@ -2,7 +2,6 @@ import { useSignal } from ".";
 
 export default function useDarkScheme() {
 
-
   const dark = matchMedia("(prefers-color-scheme: dark)");
 
   const scheme = useSignal(dark?.matches ? 'dark' : 'lignt')
@@ -11,5 +10,5 @@ export default function useDarkScheme() {
     scheme.value = event?.matches ? 'dark' : 'lignt'
   }
 
-  return dark;
+  return scheme;
 }
