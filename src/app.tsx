@@ -1,13 +1,58 @@
 import { useSignal } from ".";
 
+function Home(props) {
+
+  const {
+    children,
+    show,
+  } = props;
+
+  const list = useSignal(
+    [1, 2, 3].map((...[, index]) => ({
+      name: index,
+      id: crypto.randomUUID()
+    }))
+  );
+
+  const on = {
+    push() {
+      list.value.push({
+        name: 1,
+        id: crypto.randomUUID(),
+      })
+    },
+    unshift() {
+      list.value.unshift({
+        name: 1,
+        id: crypto.randomUUID(),
+      })
+    },
+    pop() {
+      list.value.pop();
+    }
+  }
+
+  return (
+    <div>
+      <div>
+        {
+          show.value ?
+            children :
+            list.value.tabulate((item) => <div use:key={item.id}>{item.name}</div>)
+        }
+      </div>
+      <div>
+        <button on:click={on.unshift}>unshift</button>
+        <button on:click={on.push}>push</button>
+        <button on:click={on.pop}>pop</button>
+      </div>
+    </div>
+  )
+}
+
 export default function App() {
 
-  const count = useSignal(0)
-
-  const list = useSignal(Array.from({ length: 3 }).map((...[, index]) => ({
-    name: index,
-    id: crypto.randomUUID()
-  })));
+  const count = useSignal(0);
 
   const show = useSignal(true);
   const hide = useSignal(false)
@@ -20,29 +65,12 @@ export default function App() {
 
   return (
     <div>
-      {
-        show.value ?
-          <input
-            on:input={(event) =>
-              input.value = event.target.value}
-            value={input.value}
-          /> :
-          list.value.tabulate((item) => <div use:key={item.id}>{item.name}</div>)
-      }
-      {list.value.tabulate((item) => <div use:key={item.id}>{item.name}</div>)}
-      <button
-        on:click={() => list.value.push({
-          name: 1,
-          id: crypto.randomUUID(),
-        })}
-      >
-        push
-      </button>
-      <button on:click={() => list.value.pop()}>pop</button>
-      <button on:click={() => list.value.unshift({
-        name: 1,
-        id: crypto.randomUUID(),
-      })}>unshift</button>
+      <Home show={show}>
+        <input
+          on:input={(event) => input.value = event.target.value}
+          value={input.value}
+        />
+      </Home>
       <div>1{show.value ? '显示' : '隐藏'}</div>
       <div>
         {input.value}

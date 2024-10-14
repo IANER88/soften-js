@@ -16,9 +16,11 @@ class SignalDetermine {
   render = () => {
     const element = this.view();
     if ([void 0, null, false].includes(element)) {
-      const comment = document.createComment('determine');
-      this.root.replaceWith(comment);
-      this.root = comment;
+      if (!(this.root instanceof Comment)){
+        const comment = document.createComment('determine');
+        this.root.replaceWith(comment);
+        this.root = comment;
+      }
     } else {
       const fragment = ['number', 'string'].includes(typeof element)
         ? document.createTextNode(element) :
