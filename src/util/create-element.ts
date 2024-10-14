@@ -1,9 +1,12 @@
 import createEvent from "./create-event";
 import createAttribute from "./create-attribute";
 import type { Execute } from "@/signal";
+import SignalList from "@/signal/signal-list";
+import SignalDetermine from "@/signal/signal-determine";
+import SignalTabulate from "@/signal/signal-tabulate";
 
 export const observers: Execute[] = [];
-const determine = new Set();
+
 export type Component = [
   tag: string,
   attribute: {},
@@ -13,14 +16,14 @@ export type Component = [
 export type SoftenComponent = (() => Component);
 
 export default function createElement(component: SoftenComponent) {
-  const execute = (content?: Element) => {
+  const execute = (content?: Execute) => {
     const render = (node) => {
       const [
         tag,
         attribute,
         ...children
       ] = node;
-      const element = content ?? document.createElement(tag);
+      const element = content?.subscriber ?? document.createElement(tag);
       const attr = Object.keys(attribute ?? {});
       if (attr?.length) {
         const regex = /^on:(.*)/;
@@ -33,38 +36,6 @@ export default function createElement(component: SoftenComponent) {
               event,
               func: attribute[key],
             })
-          } else if (use.test(key)) {
-            const determine_if = /^use:if$/.test(key);
-            const determine_else = /^use:else$/.test(key);
-            const determine_elif = /^use:elif$/.test(key);
-            const list = [...determine]
-            if (determine_if) {
-              determine.add({
-                condition: attribute[key],
-                element,
-              });
-            }
-
-            if (determine_else && !list[0]) {
-              throw `use:else cannot be before use:if`
-            }
-            if (determine_elif && !list[0]) {
-              throw `use:elif cannot be before use:if`
-            }
-            if (determine_else) {
-              determine.add({
-                condition: false,
-                element,
-              })
-            }
-            if (
-              determine_elif
-            ) {
-              determine.add({
-                condition: attribute[key],
-                element,
-              })
-            }
           } else {
             createAttribute({
               element,
@@ -77,48 +48,44 @@ export default function createElement(component: SoftenComponent) {
 
       if (children.length) {
         if (content) {
-          const [list] = children
-
-          if (list instanceof Array) {
-            const array = [...element.children];
-            const len = Math.max(list.length, array.length);
-
-            for (let i = 0; i < len; i++) {
-              const one = array[i];
-              const two = list[i];
-              const one_key = one?.dataset.key;
-              const two_key = two?.dataset.key;
-              if (!Object.is(one_key, two_key)) {
-                if (one) {
-                  one?.replaceWith(
-                    two ?? ''
-                  )
-                }
-                if (one_key === void 0) {
-                  element.append(two);
-                }
+          if (content.sites?.length) {
+            for (const site of content.sites) {
+              if (site !== null) {
+                children[site].root = content?.children[site].root;
+                content.children[site].tabulate = children[site].tabulate;
+                content.children[site].render();
               }
             }
           } else {
-            if (children.find((item) => item.nodeName)) {
-              console.log(children);
+            console.log(element, children);
 
-              throw `Ensure that signal value is in jsx`
-            } else {
-              element.innerText = children?.join('');
-            }
+            element.innerText = children?.join('');
           }
         } else {
-          element.append(...children.flat());
+          const content = children.map((view, site) => {
+            if (view instanceof SignalDetermine || view instanceof SignalTabulate) {
+              executes.sites.push(site);
+              return view.render();
+            }
+            return view;
+          });
+          element.append(...content.flat());
         }
       }
-
       return element;
     }
     observers.push(executes);
     try {
       const node = component();
       executes.subscriber = render(node);
+      if (!executes.children.length) {
+        const [
+          ,
+          ,
+          ...children
+        ] = node;
+        executes.children = children;
+      }
       return executes.subscriber;
     } finally {
       observers.pop();
@@ -129,6 +96,8 @@ export default function createElement(component: SoftenComponent) {
     observers: execute,
     subscriber: null,
     determines: new Set(),
+    children: [],
+    sites: [],
   }
   return execute();
 }

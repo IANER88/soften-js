@@ -726,8 +726,8 @@ export namespace JSX {
 
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
     // [key: ClassKeys]: boolean;
-    'use:if'?: boolean;
-    'use:else'?: boolean;
+    'use:key'?: boolean;
+    'use:reference'?: boolean;
     accessKey?: string | undefined;
     class?: string | undefined;
     contenteditable?: boolean | "plaintext-only" | "inherit" | undefined;

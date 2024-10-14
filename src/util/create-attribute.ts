@@ -13,7 +13,7 @@ export default function createAttribute(options: Options) {
   } = options
 
   switch (attribute) {
-    case 'key':
+    case 'use:key':
       element.dataset.key = value;
       break;
     case 'value':
@@ -23,7 +23,6 @@ export default function createAttribute(options: Options) {
       }
       break;
     case 'style':
-      console.log(value);
       element.setAttribute(attribute, Object.keys(value).map((key) => `${key}:${value[key]}`).join(';'))
       break;
     default:

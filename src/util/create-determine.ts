@@ -1,6 +1,13 @@
+import SignalDetermine from "@/signal/signal-determine";
+import { JSX } from "@/types/jsx-runtime";
 
 export const determine = [];
 
-export default function createDetermine() {
+type Condition = () => JSX.Element;
 
+export default function createDetermine(condition: Condition) {
+
+
+
+  return new SignalDetermine(condition);
 }

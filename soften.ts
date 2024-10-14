@@ -56,12 +56,40 @@ export default function SoftenJSX(): Plugin {
                 types.isIdentifier(callee.property, { name: "createElement" })
               ) {
                 // 获取参数
-                path.node.arguments.map((argument: any) => {
-                  if (types.isLiteral(argument)) {
-                    return argument.value; // 获取字面量值
-                  } else if (types.isIdentifier(argument)) {
-                    return argument.name; // 获取标识符名称
+                const args = path?.node?.arguments?.map((argument: any) => {
+                  // 处理三元运算符
+                  if (types.isConditional(argument) ||
+                    types.isLogicalExpression(argument)
+                  ) {
+                    const util = types.arrowFunctionExpression(
+                      [],
+                      types.blockStatement([
+                        types.returnStatement(
+                          argument
+                        )
+                      ])
+                    );
+                    return types.callExpression(
+                      types.identifier('Soften.createDetermine'),
+                      [util],
+                    )
                   }
+
+                  if (types.isArrayExpression(argument)) {
+                    const util = types.arrowFunctionExpression(
+                      [],
+                      types.blockStatement([
+                        types.returnStatement(
+                          argument
+                        )
+                      ])
+                    );
+                    return types.callExpression(
+                      types.identifier('Soften.createTabulate'),
+                      [util],
+                    )
+                  }
+                  return argument;
                 })
 
                 const func = types.isIdentifier(path.node.arguments?.[0]) ||
@@ -71,7 +99,7 @@ export default function SoftenJSX(): Plugin {
                   types.blockStatement([
                     types.returnStatement(
                       types.arrayExpression(
-                        path.node.arguments
+                        args
                       )
                     )
                   ])
@@ -79,7 +107,7 @@ export default function SoftenJSX(): Plugin {
                 path.replaceWith(
                   types.callExpression(
                     types.identifier(func ? 'Soften.createComponent' : 'Soften.createElement'),
-                    func ? path.node.arguments : [util]
+                    func ? args : [util]
                   )
                 )
               }
