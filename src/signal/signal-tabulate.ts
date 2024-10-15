@@ -31,12 +31,12 @@ class SignalTabulate {
         for (let site = 0; site < len; site++) {
           const tab = this.tabulate[site];
           const old = this.root[site];
-          let inster = old;
+          let inter = old;
           const newly_key = tab?.dataset?.key;
           const old_key = old?.dataset?.key;
 
           if (!Object.is(old_key, newly_key)) {
-            inster = tab;
+            inter = tab;
             if (old_key === void 0) {
               const root = this.root[site - 1];
               if (root.parentElement)
@@ -48,7 +48,7 @@ class SignalTabulate {
               old.replaceWith(tab ?? '');
             }
           }
-          tabulates.push(inster);
+          tabulates.push(inter);
         }
         this.root = tabulates;
       } else {

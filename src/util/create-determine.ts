@@ -6,8 +6,5 @@ export const determine = [];
 type Condition = () => JSX.Element;
 
 export default function createDetermine(condition: Condition) {
-
-
-
   return new SignalDetermine(condition);
 }

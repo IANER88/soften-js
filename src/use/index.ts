@@ -1,17 +1,18 @@
 import useSignal from "./use-signal";
-import { useMount } from "./use-mount";
+import useMount from "./use-mount";
 import { useRecrudescence } from "./use-recrudescence";
 import { useDisentangle } from "./use-disentangle";
-import { useRef } from "./use-ref";
+import { useReference } from "./use-reference";
 import useMemo from "./use-memo";
 import useDarkScheme from "./use-dark-scheme";
-
+import useImperativeReference from "./use-imperative-reference";
 export {
   useSignal,
   useMount,
   useRecrudescence,
   useDisentangle,
   useMemo,
-  useRef,
+  useReference,
   useDarkScheme,
+  useImperativeReference,
 }

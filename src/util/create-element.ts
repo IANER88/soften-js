@@ -1,9 +1,9 @@
 import createEvent from "./create-event";
 import createAttribute from "./create-attribute";
 import type { Execute } from "@/signal";
-import SignalList from "@/signal/signal-list";
 import SignalDetermine from "@/signal/signal-determine";
 import SignalTabulate from "@/signal/signal-tabulate";
+import SignalComponent from "@/signal/signal-component";
 
 export const observers: Execute[] = [];
 
@@ -27,13 +27,12 @@ export default function createElement(component: SoftenComponent) {
       const attr = Object.keys(attribute ?? {});
       if (attr?.length) {
         const regex = /^on:(.*)/;
-        const use = /^use:(.*)/;
         for (const key of attr) {
           if (regex.test(key)) {
-            const [, event] = key.match(regex) ?? [];
+            // const [, event] = key.match(regex) ?? [];
             createEvent({
               element,
-              event,
+              event: key.replace(':', ''),
               func: attribute[key],
             })
           } else {
@@ -47,23 +46,25 @@ export default function createElement(component: SoftenComponent) {
       }
 
       if (children.length) {
+        
         if (content) {
           if (content.sites?.length) {
             for (const site of content.sites) {
               if (site !== null) {
                 children[site].root = content?.children[site].root;
                 content.children[site].tabulate = children[site].tabulate;
-                content.children[site].render();
+                content.children?.[site]?.render?.();
               }
             }
           } else {
-            console.log(element, children);
-
             element.innerText = children?.join('');
           }
         } else {
           const content = children.map((view, site) => {
-            if (view instanceof SignalDetermine || view instanceof SignalTabulate) {
+            if (view instanceof SignalDetermine 
+              || view instanceof SignalTabulate ||
+              view instanceof SignalComponent
+            ) {
               executes.sites.push(site);
               return view.render();
             }

@@ -1,16 +1,14 @@
+import SignalComponent from "@/signal/signal-component";
 import { JSX } from "@/types/jsx-runtime";
-import { getMount } from "@/use/use-mount";
 
-type Program = JSX.Element;
+type Program = SignalComponent | JSX.Element;
 
 export default function createRoot(program: Program) {
 
   const mount = (selector: string) => {
     const root = document.querySelector(selector);
-    root?.append(program as Element);
-    for (const mount of getMount()) {
-      mount();
-    }
+    const node = program instanceof SignalComponent ? program.render() : program;
+    root?.append(node as Element);
   }
 
   return {

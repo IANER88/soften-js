@@ -1,13 +1,6 @@
-type MountEffect = () => void;
-const list: MountEffect[] = [];
+export type Mount = () => void;
+export const mounts: Mount[] = [];
 
-const useMount = (mount: MountEffect) => {
-  list.push(mount)
-}
-
-const getMount = () => list;
-
-export {
-  useMount,
-  getMount,
+export default function useMount(mount: Mount) {
+  mounts.push(mount)
 }

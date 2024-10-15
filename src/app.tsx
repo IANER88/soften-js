@@ -1,6 +1,7 @@
-import { useSignal } from ".";
+import { useDisentangle, useMemo, useMount, useRecrudescence, useReference, useSignal } from ".";
+import useImperativeReference from "./use/use-imperative-reference";
 
-function Home(props) {
+function Home(props, reference) {
 
   const {
     children,
@@ -32,6 +33,15 @@ function Home(props) {
     }
   }
 
+  useImperativeReference(
+    reference,
+    () => ({
+      add: () => {
+
+      }
+    })
+  );
+
   return (
     <div>
       <div>
@@ -50,6 +60,39 @@ function Home(props) {
   )
 }
 
+const Disentangle = () => {
+  useDisentangle(() => {
+    console.log('销毁1');
+  });
+  useDisentangle(() => {
+    console.log('销毁2');
+  });
+  const id = useReference();
+  useMount(() => {
+    console.log(id.reference, 1);
+  })
+  return (
+    <div use:reference={id}>Disentangle</div>
+  )
+}
+
+const About = () => {
+  useDisentangle(() => {
+    console.log('销毁3');
+  });
+  useDisentangle(() => {
+    console.log('销毁4');
+  });
+
+  const id = useReference();
+  useMount(() => {
+    console.log(id.reference, 2);
+  })
+  return (
+    <div use:reference={id}>Disentangle</div>
+  )
+}
+
 export default function App() {
 
   const count = useSignal(0);
@@ -63,15 +106,22 @@ export default function App() {
 
   const input = useSignal('0');
 
+  const id = useReference();
+
+  useMount(() => {
+    console.log(<About />);
+  });
+
   return (
     <div>
-      <Home show={show}>
+      <Home show={show} use:reference={id} use:key="1">
         <input
           on:input={(event) => input.value = event.target.value}
           value={input.value}
         />
       </Home>
-      <div>1{show.value ? '显示' : '隐藏'}</div>
+      <div>1{show.value ? <About /> : <Disentangle />}</div>
+      <span>{count.value}</span>
       <div>
         {input.value}
         {
@@ -82,6 +132,7 @@ export default function App() {
       </div>
       <button on:click={onclick}>show</button>
       <button on:click={onhide}>hide</button>
+      <button on:click={() => count.value += 1}>{count.value}</button>
     </div>
   )
 }

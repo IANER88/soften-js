@@ -1,5 +1,5 @@
 import * as csstype from "csstype";
-
+import type Reference from '../use/use-reference'
 /**
  * Based on JSX types for Surplus and Inferno and adapted for `dom-expressions`.
  *
@@ -727,7 +727,7 @@ export namespace JSX {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
     // [key: ClassKeys]: boolean;
     'use:key'?: boolean;
-    'use:reference'?: boolean;
+    'use:reference'?: Reference;
     accessKey?: string | undefined;
     class?: string | undefined;
     contenteditable?: boolean | "plaintext-only" | "inherit" | undefined;

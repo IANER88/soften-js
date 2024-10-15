@@ -1,11 +1,12 @@
 import { observers } from '@/util/create-element';
 import { RecrudescenceFn, getRecrudescence } from '../use/use-recrudescence';
 import SignalList from './signal-list';
+import SignalTabulate from './signal-tabulate';
 export type Execute = {
   observers: (content: Execute) => Element | null;
   subscriber: null | Element;
   determines: Set<() => void>;
-  children: (Element | SignalList<Element>)[];
+  children: (Element | SignalTabulate)[];
   sites: number[];
 };
 class Signal<S> {
@@ -34,17 +35,15 @@ class Signal<S> {
     };
 
     const get = (target, key) => {
-
       const stack = getRecrudescence();
       const effect = stack[stack.length - 1]
       if (effect) {
         this.#recrudescence.add(effect);
-        effect.deps.add(this.#recrudescence)
+        effect.deps.add(this.#recrudescence);
       }
       const observer = observers.at(-1);
-      if (observer) {
-        this.#observers.add(observer);
-      }
+      
+      if (observer) this.#observers.add(observer);
       return target[key]
     }
 
