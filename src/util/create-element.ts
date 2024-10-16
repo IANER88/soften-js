@@ -50,7 +50,7 @@ export default function createElement(component: SoftenComponent) {
         if (content) {
           if (content.sites?.length) {
             for (const site of content.sites) {
-              if (site !== null) {
+              if (site !== null && content.children[site] instanceof SignalTabulate) {
                 children[site].root = content?.children[site].root;
                 content.children[site].tabulate = children[site].tabulate;
                 content.children?.[site]?.render?.();
@@ -85,7 +85,7 @@ export default function createElement(component: SoftenComponent) {
           ,
           ...children
         ] = node;
-        executes.children = children;
+        executes.children = children as unknown as Execute['children'];
       }
       return executes.subscriber;
     } finally {

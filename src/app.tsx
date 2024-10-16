@@ -1,4 +1,4 @@
-import { useDisentangle, useMemo, useMount, useRecrudescence, useReference, useSignal } from ".";
+import { useDisentangle, useMount,useReference, useSignal } from ".";
 import useImperativeReference from "./use/use-imperative-reference";
 
 function Home(props, reference) {
@@ -32,6 +32,11 @@ function Home(props, reference) {
       list.value.pop();
     }
   }
+
+  list.value.tabulate((item) => {
+    console.log(item);
+    
+  })
 
   useImperativeReference(
     reference,

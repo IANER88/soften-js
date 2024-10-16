@@ -19,9 +19,15 @@ export default function createAttribute(options: Options) {
       element.dataset.key = value as string;
       break;
     case 'use:reference':
-      if (value instanceof SignalReference){
+      if (value instanceof SignalReference) {
         value.reference = element;
       }
+      break;
+    case 'use:html':
+      element.innerHTML = value as string;
+      break;
+    case 'use:text':
+      element.innerHTML = value as string
       break;
     case 'value':
       if (element instanceof HTMLInputElement) {
@@ -31,7 +37,7 @@ export default function createAttribute(options: Options) {
       break;
     case 'style':
       element.setAttribute(
-        attribute, 
+        attribute,
         Object.keys(value as {}).map((key) => `${key}:${(value as {})[key]}`).join(';')
       )
       break;

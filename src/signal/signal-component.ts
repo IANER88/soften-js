@@ -35,6 +35,7 @@ export default class SignalComponent {
       for (const mount of mounts) {
         this.mounts.add(mount)
       }
+      if (this.mounts.size) for (const mount of this.mounts) mount();
       mounts.length = 0;
     }
     return element

@@ -728,6 +728,8 @@ export namespace JSX {
     // [key: ClassKeys]: boolean;
     'use:key'?: boolean;
     'use:reference'?: Reference;
+    'use:html'?: string;
+    'use:text'?: string;
     accessKey?: string | undefined;
     class?: string | undefined;
     contenteditable?: boolean | "plaintext-only" | "inherit" | undefined;

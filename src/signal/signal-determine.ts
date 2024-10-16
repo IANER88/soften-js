@@ -1,10 +1,11 @@
 import { Disentangle } from "@/use/use-disentangle";
 import SignalComponent from "./signal-component";
 import SignalTabulate from "./signal-tabulate";
+import { JSX } from "@/types/jsx-runtime";
 
 class SignalDetermine {
 
-  root: Element[] | Element | Comment;
+  root: Element[] | Element | Comment | JSX.ArrayElement;
 
   view: () => Element | string | null;
 
@@ -23,7 +24,7 @@ class SignalDetermine {
     if ([void 0, null, false].includes(element as null)) {
       if (this.root instanceof Comment) return this.root;
       const comment = document.createComment('determine');
-      this.root.replaceWith(comment);
+      (this.root as unknown as Comment).replaceWith(comment);
       this.root = comment;
       return this.root;
     }
@@ -50,7 +51,6 @@ class SignalDetermine {
      */
     if (element instanceof SignalComponent) {
       this.disentangles = element.disentangles;
-      for(const mount of element.mounts) mount();
     }
 
     if (this.root instanceof Array) {
@@ -58,17 +58,17 @@ class SignalDetermine {
        * 标记空节点
        */
       const comment = document.createComment('determine');
-      this.root.map((view, site) => {
-        if (site === this.root.length - 1) {
-          view.replaceWith(...(node?.length ? node : [comment]))
+      this.root.forEach((view: any, site) => {
+        if (site === (this.root as any).length - 1) {
+          view.replaceWith(...((node?.length ? node : [comment])))
         } else {
           view.replaceWith('')
         }
       })
       this.root = node?.length ? node : [comment]
     } else {
-      this.root.replaceWith(...(node));
-      this.root = fragment;
+      this.root.replaceWith(...(node as any));
+      this.root = fragment as any;
     }
 
     return this.root;

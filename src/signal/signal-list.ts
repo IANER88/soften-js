@@ -9,7 +9,7 @@ class SignalList<S> extends Array {
     this.subscribers = [];
     this.site = 0;
   }
-  tabulate(fn: (item: S extends Array<infer U> ? U : S ,index: number) => unknown) {
+  tabulate(fn: (item: S extends (infer U)[] ? U : S ,index: number) => unknown) {
     const list = [...this].map(fn);
 
     const tabulate = new SignalTabulate(...list);
