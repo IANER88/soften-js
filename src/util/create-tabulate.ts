@@ -9,7 +9,7 @@ export default function createTabulate(tabulate) {
   const execute = () => {
     tabulates.push(executes);
     try {
-      const subscriber = new SignalTabulate(...tabulate);;
+      const subscriber = new SignalTabulate(tabulate);
       executes.subscriber = subscriber;
       return subscriber;
     } finally {

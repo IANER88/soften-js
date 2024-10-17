@@ -1,70 +1,71 @@
 class SignalTabulate {
 
-  root?: HTMLElement[] | Comment;
+  #root?: HTMLElement[] | Comment;
 
-  tabulate: HTMLElement[];
+  #tabulate: () => HTMLElement[];
 
-  constructor(...tabulate) {
-    this.tabulate = tabulate;
-    // const comment = document.createComment('tabulate');
-    // this.root = comment;
+  constructor(tabulate) {
+    this.#tabulate = tabulate;
   }
 
-  once = () => {
-    const tabulates = this.tabulate;
+  #test = () => {
+    const tabulates = this.#tabulate?.();
     if (tabulates.length) {
-      return this.tabulate;
+      return tabulates;
     }
     return document.createComment('tabulate');
   }
 
+  once = () => {
+    const node = this.#test();
+    this.#root = node;
+    return node;
+  }
+
   render = () => {
-    /**
-     * 初次渲染
-     */
-    const fragment = this.once();
-    if (this.root instanceof Comment) {
+    const fragment = this.#test();
+    if (this.#root instanceof Comment) {
       /**
        * 有值才能渲染
        */
-      this.root.replaceWith(...fragment);
-      this.root = this.tabulate;
-    } else {
-      if (this.tabulate.length) {
-        const tabulates: HTMLElement[] = [];
-        // const len = Math.max(this.tabulate.length, this.root.length);
-        // for (let site = 0; site < len; site++) {
-        //   const tab = this.tabulate[site];
-        //   const old = this.root[site];
-        //   let inter = old;
-        //   const newly_key = tab?.dataset?.key;
-        //   const old_key = old?.dataset?.key;
-
-        //   if (!Object.is(old_key, newly_key)) {
-        //     inter = tab;
-        //     if (old_key === void 0) {
-        //       const root = this.root[site - 1];
-        //       if (root.parentElement)
-        //         root.parentElement.insertBefore(
-        //           this.tabulate[site],
-        //           root.nextSibling,
-        //         )
-        //     } else {
-        //       old.replaceWith(tab ?? '');
-        //     }
-        //   }
-        //   tabulates.push(inter);
-        // }
-        this.root = tabulates;
-      } else {
-        const comment = document.createComment('tabulate');
-        const [root] = this.root;
-        root.replaceWith(comment);
-        this.root = comment;
-      }
+      this.#root.replaceWith(...fragment);
+      this.#root = fragment;
+      return;
     }
 
-    return this.root;
+    // if (fragment.length) {
+    //   const tabulates: HTMLElement[] = [];
+    //   const len = Math.max(fragment.length, this.#root.length);
+    //   for (let site = 0; site < len; site++) {
+    //     const tab = fragment[site];
+    //     const old = this.#root[site];
+    //     let inter = old;
+    //     const newly_key = tab?.dataset?.key;
+    //     const old_key = old?.dataset?.key;
+    //     if (!Object.is(old_key, newly_key)) {
+    //       inter = tab;
+    //       if (old_key === void 0) {
+    //         const root = this.#root[site - 1];
+    //         if (root.parentElement)
+    //           root.parentElement.insertBefore(
+    //             fragment[site],
+    //             root.nextSibling,
+    //           )
+    //       } else {
+    //         old.replaceWith(tab ?? '');
+    //       }
+    //     }
+    //     tabulates.push(inter);
+    //   }
+    //   this.#root = tabulates;
+    // } else {
+    //   const comment = document.createComment('tabulate');
+    //   const [root] = this.#root;
+    //   console.log(root);
+
+    //   root.replaceWith(comment);
+    //   this.#root = comment;
+    // }
   }
 }
 

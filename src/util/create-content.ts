@@ -1,10 +1,14 @@
 import SignalContent from "@/signal/signal-content";
 
-export const contents = [];
+type Execute = {
+  subscriber: SignalContent | null;
+}
+
+export const contents: Execute[] = [];
 
 export default function createContent(content: () => string | number) {
 
-  const execute = (node) => {
+  const execute = () => {
     contents.push(executes);
     try {
       content()
@@ -16,7 +20,7 @@ export default function createContent(content: () => string | number) {
     }
   }
 
-  const executes = {
+  const executes: Execute = {
     subscriber: null,
   }
 

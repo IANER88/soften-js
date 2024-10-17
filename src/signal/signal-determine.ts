@@ -35,7 +35,6 @@ class SignalDetermine {
   constructor(view) {
     this.#view = view;
     this.#disentangles = new Set();
-    return this
   }
 
   once = () => {

@@ -1,19 +1,24 @@
 import { createTabulate } from "@/util";
 import SignalTabulate from "./signal-tabulate";
+export const tabulates = [];
 
 class SignalList<S> extends Array {
-  subscribers: [];
-  site: number;
+
+  observers: Set<SignalTabulate>;
 
   constructor(initialState: S) {
     super(...initialState as []);
-    this.subscribers = [];
-    this.site = 0;
+    this.observers = new Set();
   }
-  tabulate(fn: (item: S extends (infer U)[] ? U : S ,index: number) => unknown) {
-    const list = [...this].map(fn);
 
-    return createTabulate(list);
+  tabulate = (fn: (item: S extends (infer U)[] ? U : S, index: number) => unknown) => {
+    const list = () => [...this].map(fn);
+    const observer = createTabulate(list);
+    
+    // if (!observer.tabulate.includes(void 0)) {
+    //   this.observers.add(observer);
+    // }
+    return observer;
   }
 }
 

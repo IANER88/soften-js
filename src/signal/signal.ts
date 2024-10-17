@@ -1,15 +1,17 @@
 import { observers } from '@/util/create-element';
 import { RecrudescenceFn, getRecrudescence } from '../use/use-recrudescence';
-import SignalList from './signal-list';
+import SignalList, { tabulates } from './signal-list';
 import { contents } from '@/util/create-content';
 import SignalContent from './signal-content';
 import SignalDetermine from './signal-determine';
 import { determines } from '@/util/create-determine';
-import { tabulates } from '@/util/create-tabulate';
 import SignalComponent from './signal-component';
 import SignalTabulate from './signal-tabulate';
 import { attributes } from '@/util/create-attribute';
 import SignalAttribute from './signal-attribute';
+import { createTabulate } from '@/util';
+// import { tabulates } from '@/util/create-tabulate';
+
 export type Execute = {
   subscriber: SignalContent | SignalComponent | SignalDetermine | SignalTabulate | SignalAttribute | null;
 };
@@ -32,14 +34,7 @@ class Signal<S> {
           effect?.rely?.();
         }
         for (const observer of this.#observers) {
-          const node = observer.subscriber instanceof SignalContent ||
-            observer.subscriber instanceof SignalDetermine || 
-            observer.subscriber instanceof SignalAttribute
-          if (node) {
-            console.log(observer?.subscriber?.render());
-            
-            // observer?.subscriber?.render();
-          };
+          if (observer.subscriber) observer?.subscriber?.render()
         }
       }
       return true;
@@ -60,21 +55,36 @@ class Signal<S> {
       if (content) this.#observers.add(content);
       if (determine) this.#observers.add(determine);
       if (attribute) this.#observers.add(attribute);
+
       if (tabulate) this.#observers.add(tabulate);
 
       return target[key]
     }
 
-    this.value = initialState instanceof Array ?
-      new Proxy(new SignalList(initialState), {
+    const proxy = (signal) => {
+      return new Proxy(signal, {
         set,
         get,
-      }) : initialState
+      });
+    }
 
-    const signal = new Proxy(this, {
-      set,
-      get,
-    });
+    const observer = (state) => {
+      if (state instanceof Object && state !== null) {
+        if (state instanceof Array) {
+          const signal: any = [];
+          for (const soften of state) signal.push(observer(soften))
+          return proxy(new SignalList(signal));
+        };
+        for (const value in state) {
+          state[value] = observer(state[value]);
+        }
+        return proxy(state);
+      }
+      return state;
+    }
+    this.value = observer(initialState);
+    
+    const signal = proxy(this)
 
     return signal;
   }

@@ -3,7 +3,7 @@ import SignalReference from "./signal-reference";
 
 export default class SignalAttribute {
 
-  #root: HTMLElement | null;
+  #root: HTMLElement | HTMLInputElement;
 
   #value: () => unknown;
 
@@ -13,7 +13,7 @@ export default class SignalAttribute {
 
   constructor(value) {
     this.#value = value;
-    this.#root = null;
+    this.#root = null as any;
     this.#attribute = ''
   }
 
@@ -36,7 +36,7 @@ export default class SignalAttribute {
             break;
           case 'use:reference':
             if (value instanceof SignalReference) {
-              this.render = () => this.#value().reference = this.#root;
+              value.reference = this.#root
             }
             break;
           case 'use:html':
@@ -46,12 +46,13 @@ export default class SignalAttribute {
             this.render = () => this.#root.innerHTML = this.#value() as string
             break;
           case 'value':
-            if (this.#root instanceof HTMLInputElement) {
-              this.render = () => {
+            this.render = () => {
+              if (this.#root instanceof HTMLInputElement) {
                 this.#root.value = this.#value() as string;
                 this.#root.setAttribute(this.#attribute, this.#value() as string)
               }
             }
+
             break;
           case 'style':
             this.render = () => {
