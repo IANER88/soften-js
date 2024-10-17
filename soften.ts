@@ -87,8 +87,7 @@ export default function SoftenJSX(): Plugin {
                       types,
                     })
                   }
-                  if (index !== 0 && types.isIdentifier(argument) ||
-                    types.isMemberExpression(argument)) {
+                  if (index !== 0 && test(argument)) {
                     return block({
                       argument,
                       name: 'Soften.createContent',

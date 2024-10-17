@@ -14,7 +14,7 @@ export type Component = [
 
 export type SoftenComponent = (() => Component);
 
-export default function createElement(tag, attribute, ...children) {
+export default function createElement(tag: string, attribute, ...children) {
   const execute = () => {
     const element = document.createElement(tag);
     const attr = Object.keys(attribute ?? {});
@@ -36,10 +36,6 @@ export default function createElement(tag, attribute, ...children) {
       element.append(...content)
     }
     return element;
-  }
-
-  const executes: Execute = {
-    subscriber: null,
   }
   return execute();
 }

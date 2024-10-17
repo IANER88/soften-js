@@ -1,11 +1,12 @@
 class SignalTabulate {
 
-  #root?: HTMLElement[] | Comment;
+  #root: HTMLElement[] | Comment;
 
-  #tabulate: () => HTMLElement[];
+  #tabulate = () => HTMLElement;
 
   constructor(tabulate) {
     this.#tabulate = tabulate;
+    this.#root = document.createComment('tabulate');
   }
 
   #test = () => {
@@ -24,6 +25,31 @@ class SignalTabulate {
 
   render = () => {
     const fragment = this.#test();
+    if (fragment.length) {
+      const max = Math.max(fragment.length, this.#root?.length);
+
+      const tabulates = [];
+      for (let site = 0; site < max; site++) {
+        const previous = this.#root[site];
+        const next = fragment[site];
+        let inter = previous;
+        const one = previous?.dataset?.key;
+        const two = next?.dataset?.key;
+        console.log(one, two);
+        
+        if (!Object.is(one, two)) {
+          if (!one) {
+            const last = this.#root.at(-1);
+            inter = next;
+            last.insertAdjacentElement('afterend', next)
+          }
+
+        }
+        tabulates.push(inter)
+      }
+      this.#root = tabulates;
+    }
+
     if (this.#root instanceof Comment) {
       /**
        * 有值才能渲染

@@ -24,8 +24,6 @@ export default class SignalContent {
 
   render = () => {
     const node = this.#test(this.#content());
-    console.log(node);
-    
     this.#root?.replaceWith(node)
     this.#root = node;
   }

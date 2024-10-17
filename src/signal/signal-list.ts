@@ -14,11 +14,13 @@ class SignalList<S> extends Array {
   tabulate = (fn: (item: S extends (infer U)[] ? U : S, index: number) => unknown) => {
     const list = () => [...this].map(fn);
     const observer = createTabulate(list);
-    
-    // if (!observer.tabulate.includes(void 0)) {
-    //   this.observers.add(observer);
-    // }
-    return observer;
+    tabulates.push(observer)
+    try {
+
+    } finally {
+      tabulates.pop();
+    }
+    return observer as unknown as Element;
   }
 }
 
