@@ -1,10 +1,31 @@
 import SignalDetermine from "@/signal/signal-determine";
 import { JSX } from "@/types/jsx-runtime";
 
-export const determine = [];
+type Determines = {
+  subscriber: null | SignalDetermine;
+}
+
+export const determines: Determines[] = [];
 
 type Condition = () => JSX.Element;
 
 export default function createDetermine(condition: Condition) {
-  return new SignalDetermine(condition);
+
+  const execute = () => {
+    determines.push(executes);
+    try {
+      condition()
+      const subscriber = new SignalDetermine(condition);
+      executes.subscriber = subscriber;
+      return subscriber;
+    } finally {
+      determines.pop();
+    }
+  }
+
+  const executes: Determines = {
+    subscriber: null,
+  }
+
+  return execute();
 }

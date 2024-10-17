@@ -1,3 +1,4 @@
+import { createTabulate } from "@/util";
 import SignalTabulate from "./signal-tabulate";
 
 class SignalList<S> extends Array {
@@ -12,9 +13,7 @@ class SignalList<S> extends Array {
   tabulate(fn: (item: S extends (infer U)[] ? U : S ,index: number) => unknown) {
     const list = [...this].map(fn);
 
-    const tabulate = new SignalTabulate(...list);
-
-    return tabulate as unknown as Element;
+    return createTabulate(list);
   }
 }
 

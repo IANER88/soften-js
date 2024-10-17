@@ -5,73 +5,63 @@ import { JSX } from "@/types/jsx-runtime";
 
 class SignalDetermine {
 
-  root: Element[] | Element | Comment | JSX.ArrayElement;
+  #root?: Element[] | Element | Comment | JSX.ArrayElement;
 
-  view: () => Element | string | null;
+  #view: () => Element | string | null;
 
-  disentangles: Set<Disentangle>;
+  #disentangles: Set<Disentangle>;
+
+  #test = () => {
+    const node = [void 0, null, false];
+    const element = this.#view();
+    if (this.#disentangles.size) {
+      for (const disentangle of this.#disentangles) {
+        disentangle();
+      }
+      this.#disentangles = new Set();
+    }
+    if (node.includes(element as any)) {
+      return document.createComment('determine');
+    }
+    if (element instanceof SignalComponent) {
+      for (const disentangle of element.disentangles) {
+        this.#disentangles.add(disentangle)
+      }
+      return element.render();
+    }
+    return element;
+  }
 
   constructor(view) {
-    this.view = view;
-    const comment = document.createComment('determine');
-    this.root = comment;
-    this.disentangles = new Set();
+    this.#view = view;
+    this.#disentangles = new Set();
     return this
   }
 
+  once = () => {
+    const node = this.#test();
+    this.#root = node as any;
+    return node;
+  }
+
   render = () => {
-    const element = this.view();
-    if ([void 0, null, false].includes(element as null)) {
-      if (this.root instanceof Comment) return this.root;
-      const comment = document.createComment('determine');
-      (this.root as unknown as Comment).replaceWith(comment);
-      this.root = comment;
-      return this.root;
-    }
-
-    const fragment = ['number', 'string'].includes(typeof element)
-      ? document.createTextNode(element as string) :
-      (element instanceof SignalTabulate || element instanceof SignalComponent) ?
-        element.render() :
-        element;
-
-    const node = fragment instanceof Array ? fragment : [fragment];
+    const node = this.#test();
+    const fragment = node instanceof SignalTabulate ?
+      node.once() : node instanceof Array ? node : [node];
     
-    /**
-     * 卸载组件
-     */
-    if (this.disentangles.size){
-      for(const disentangle of this.disentangles){
-        disentangle();
+    if (this.#root instanceof Array) {
+      const app: any = this.#root.at(-1);
+      for (const view of this.#root.slice(0, -1)) {
+        (view as any).replaceWith('')
       }
-      this.disentangles = new Set();
-    }
-    /**
-     * 判断是组件，收集卸载生命周期和执行挂载
-     */
-    if (element instanceof SignalComponent) {
-      this.disentangles = element.disentangles;
-    }
-
-    if (this.root instanceof Array) {
-      /**
-       * 标记空节点
-       */
-      const comment = document.createComment('determine');
-      this.root.forEach((view: any, site) => {
-        if (site === (this.root as any).length - 1) {
-          view.replaceWith(...((node?.length ? node : [comment])))
-        } else {
-          view.replaceWith('')
-        }
-      })
-      this.root = node?.length ? node : [comment]
+      app.replaceWith(...fragment as []);
+      console.log(fragment);
+      
+      this.#root = fragment;
     } else {
-      this.root.replaceWith(...(node as any));
-      this.root = fragment as any;
+      (this.#root as any).replaceWith(node as Element);
+      this.#root = node as any;
     }
-
-    return this.root;
   }
 }
 

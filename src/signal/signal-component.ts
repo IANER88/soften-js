@@ -32,11 +32,8 @@ export default class SignalComponent {
       disentangles.length = 0;
     }
     if (mounts.length) {
-      for (const mount of mounts) {
-        this.mounts.add(mount)
-      }
-      if (this.mounts.size) for (const mount of this.mounts) mount();
-      mounts.length = 0;
+      for (const mount of mounts) this.mounts.add(mount)
+      // mounts.length = 0;
     }
     return element
   }

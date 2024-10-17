@@ -1,13 +1,15 @@
 import { observers } from '@/util/create-element';
 import { RecrudescenceFn, getRecrudescence } from '../use/use-recrudescence';
 import SignalList from './signal-list';
-import SignalTabulate from './signal-tabulate';
+import { contents } from '@/util/create-content';
+import SignalContent from './signal-content';
+import SignalDetermine from './signal-determine';
+import { determines } from '@/util/create-determine';
+import { tabulates } from '@/util/create-tabulate';
+import SignalComponent from './signal-component';
 export type Execute = {
   observers: (content: Execute) => Element | null;
-  subscriber: null | Element;
-  determines: Set<() => void>;
-  children: (Element | SignalTabulate)[];
-  sites: number[];
+  subscriber: SignalContent | SignalComponent | SignalDetermine;
 };
 class Signal<S> {
   value: S extends unknown[] ? SignalList<S> : S;
@@ -28,7 +30,11 @@ class Signal<S> {
           effect?.rely?.();
         }
         for (const observer of this.#observers) {
-          observer.observers(observer)
+          const node = observer.subscriber instanceof SignalContent ||
+            observer.subscriber instanceof SignalDetermine
+          if (node) {
+            observer.subscriber.render();
+          };
         }
       }
       return true;
@@ -42,8 +48,15 @@ class Signal<S> {
         effect.deps.add(this.#recrudescence);
       }
       const observer = observers.at(-1);
-      
+      const content = contents.at(-1);
+      const determine = determines.at(-1);
+      const tabulate = tabulates.at(-1)
+
       if (observer) this.#observers.add(observer);
+      if (content) this.#observers.add(content);
+      if (determine) this.#observers.add(determine);
+      if (tabulate) this.#observers.add(tabulate);
+
       return target[key]
     }
 

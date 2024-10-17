@@ -38,14 +38,17 @@ function Home(props, reference) {
     
   })
 
-  useImperativeReference(
-    reference,
-    () => ({
-      add: () => {
+  // useImperativeReference(
+  //   reference,
+  //   () => ({
+  //     add: () => {
 
-      }
-    })
-  );
+  //     }
+  //   })
+  // );
+
+  console.log(props);
+  
 
   return (
     <div>
@@ -73,8 +76,12 @@ const Disentangle = () => {
     console.log('销毁2');
   });
   const id = useReference();
+
   useMount(() => {
-    console.log(id.reference, 1);
+    console.log(
+      document.querySelector('#id')
+    );
+    
   })
   return (
     <div use:reference={id}>Disentangle</div>
@@ -85,16 +92,11 @@ const About = () => {
   useDisentangle(() => {
     console.log('销毁3');
   });
-  useDisentangle(() => {
-    console.log('销毁4');
-  });
 
   const id = useReference();
-  useMount(() => {
-    console.log(id.reference, 2);
-  })
+
   return (
-    <div use:reference={id}>Disentangle</div>
+    <div use:reference={id}>About</div>
   )
 }
 
@@ -113,13 +115,17 @@ export default function App() {
 
   const id = useReference();
 
-  useMount(() => {
-    console.log(<About />);
+  useDisentangle(() => {
+    console.log('销毁4');
   });
+
+  useMount(() => {
+    console.log(document.querySelector('#id'));
+  })
 
   return (
     <div>
-      <Home show={show} use:reference={id} use:key="1">
+      <Home show={show} use:key="1" id="id">
         <input
           on:input={(event) => input.value = event.target.value}
           value={input.value}
@@ -137,7 +143,7 @@ export default function App() {
       </div>
       <button on:click={onclick}>show</button>
       <button on:click={onhide}>hide</button>
-      <button on:click={() => count.value += 1}>{count.value}</button>
+      <button on:click={() => count.value += 1}>{count.value}2</button>
     </div>
   )
 }
