@@ -56,7 +56,7 @@ class SignalDetermine {
       app.replaceWith(...fragment as []);
       console.log(fragment);
       
-      this.#root = fragment;
+      this.#root = fragment as any;
     } else {
       (this.#root as any).replaceWith(node as Element);
       this.#root = node as any;

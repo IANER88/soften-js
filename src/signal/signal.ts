@@ -1,5 +1,5 @@
 import { RecrudescenceFn, getRecrudescence } from '../use/use-recrudescence';
-import SignalList, { tabulates } from './signal-list';
+import SignalList from './signal-list';
 import { contents } from '@/util/create-content';
 import SignalContent from './signal-content';
 import SignalDetermine from './signal-determine';
@@ -32,7 +32,7 @@ class Signal<S> {
           effect?.rely?.();
         }
         for (const observer of this.#observers) {
-          if (observer.subscriber) observer?.subscriber?.render()
+          if (observer.subscriber) observer?.subscriber?.render?.();
         }
       }
       return true;
@@ -84,7 +84,7 @@ class Signal<S> {
 
   tabulate = (fn: (item: S extends (infer U)[] ? U : S, index: number) => unknown) => {
     if (!(this.value instanceof Array)) return new Error('');
-    const list = () => [...this.value].map(fn);
+    const list = () => [...this.value as []].map(fn);
     const observer = createTabulate(list);
     this.#observers.add({ subscriber: observer })
     return observer as unknown as Element;

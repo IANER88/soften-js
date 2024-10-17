@@ -11,7 +11,7 @@ export default function createAttribute(attribute) {
   const execute = () => {
     attributes.push(executes);
     try {
-      const root = attribute()
+      attribute()
       const subscriber = new SignalAttribute(attribute);
       executes.subscriber = subscriber;
 
