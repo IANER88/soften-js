@@ -5,60 +5,69 @@ export default class SignalAttribute {
 
   #root: HTMLElement | null;
 
-  #attribute: () => {};
+  #value: () => unknown;
 
-  constructor(attribute) {
-    this.#attribute = attribute;
+  #attribute: string;
+
+  render?: () => void;
+
+  constructor(value) {
+    this.#value = value;
     this.#root = null;
+    this.#attribute = ''
   }
 
-  render = (root) => {
-    if (!this.#root) this.#root = root;
-
+  once = (root: HTMLElement, attribute) => {
+    this.#attribute = attribute;
+    this.#root = root;
     if (this.#root) {
       const regex = /^on:(.*)/;
-      for (const key in this.#attribute) {
-        if (regex.test(key)) {
-          createEvent({
-            element: this.#root,
-            event: key.replace(':', ''),
-            func: this.#attribute[key],
-          })
-        } else {
-          const value = this.#attribute[key];
-          switch (key) {
-            case 'use:key':
-              this.#root.dataset.key = value as string;
-              break;
-            case 'use:reference':
-              if (value instanceof SignalReference) {
-                value.reference = this.#root;
+      if (regex.test(this.#attribute)) {
+        createEvent({
+          element: this.#root,
+          event: this.#attribute.replace(':', ''),
+          func: this.#value() as () => void,
+        })
+      } else {
+        const value = this.#value();
+        switch (this.#attribute) {
+          case 'use:key':
+            this.render = () => this.#root.dataset.key = this.#value() as string;
+            break;
+          case 'use:reference':
+            if (value instanceof SignalReference) {
+              this.render = () => this.#value().reference = this.#root;
+            }
+            break;
+          case 'use:html':
+            this.render = () => this.#root.innerHTML = this.#value() as string;
+            break;
+          case 'use:text':
+            this.render = () => this.#root.innerHTML = this.#value() as string
+            break;
+          case 'value':
+            if (this.#root instanceof HTMLInputElement) {
+              this.render = () => {
+                this.#root.value = this.#value() as string;
+                this.#root.setAttribute(this.#attribute, this.#value() as string)
               }
-              break;
-            case 'use:html':
-              this.#root.innerHTML = value as string;
-              break;
-            case 'use:text':
-              this.#root.innerHTML = value as string
-              break;
-            case 'value':
-              if (this.#root instanceof HTMLInputElement) {
-                this.#root.value = value as string;
-                this.#root.setAttribute(key, value as string)
-              }
-              break;
-            case 'style':
+            }
+            break;
+          case 'style':
+            this.render = () => {
+              const value = this.#value();
               this.#root.setAttribute(
-                key,
+                this.#attribute,
                 Object.keys(value as {}).map((key) => `${key}:${(value as {})[key]}`).join(';')
               )
-              break;
-            default:
-              this.#root.setAttribute(key, value as string)
+            }
+            break;
+          default:
+            this.render = () => this.#root.setAttribute(this.#attribute, this.#value() as string);
 
-          }
         }
       }
+      this.render?.();
     }
   }
 }

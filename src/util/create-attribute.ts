@@ -4,7 +4,7 @@ type Attribute = {
   subscriber: null | SignalAttribute
 }
 
-const attributes: Attribute[] = [];
+export const attributes: Attribute[] = [];
 
 export default function createAttribute(attribute) {
 
@@ -12,7 +12,7 @@ export default function createAttribute(attribute) {
     attributes.push(executes);
     try {
       const root = attribute()
-      const subscriber = new SignalAttribute(root);
+      const subscriber = new SignalAttribute(attribute);
       executes.subscriber = subscriber;
 
       return subscriber

@@ -1,4 +1,4 @@
-import { useDisentangle, useMount,useReference, useSignal } from ".";
+import { useDisentangle, useMount, useReference, useSignal } from ".";
 import useImperativeReference from "./use/use-imperative-reference";
 
 function Home(props, reference) {
@@ -35,7 +35,7 @@ function Home(props, reference) {
 
   list.value.tabulate((item) => {
     console.log(item);
-    
+
   })
 
   // useImperativeReference(
@@ -48,7 +48,7 @@ function Home(props, reference) {
   // );
 
   console.log(props);
-  
+
 
   return (
     <div>
@@ -81,7 +81,7 @@ const Disentangle = () => {
     console.log(
       document.querySelector('#id')
     );
-    
+
   })
   return (
     <div use:reference={id}>Disentangle</div>
@@ -136,7 +136,7 @@ export default function App() {
       <div>
         {input.value}
         {
-          hide.value && <span style={{ color: show.value ? 'red' : 'blue' }}>
+          hide.value && <span style={{ color: show.value ? 'red' : 'blue', background: 'green', height: count.value + 'px' }}>
             {input.value}
           </span>
         }

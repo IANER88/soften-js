@@ -10,7 +10,6 @@ export default function createEvent(options: Options) {
     func,
     element,
   } = options;
-  
   element[event] = func;
   // for (const event of on) {
   //   if (event === 'change' && node.tag === 'input') {

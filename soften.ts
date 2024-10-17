@@ -51,6 +51,11 @@ export default function SoftenJSX(): Plugin {
             CallExpression(path: any) {
               const callee = path.node.callee;
 
+              const test = (node) => {
+                return types.isIdentifier(node) ||
+                  types.isMemberExpression(node);
+              }
+
               const block = ({
                 types,
                 argument,
@@ -91,12 +96,18 @@ export default function SoftenJSX(): Plugin {
                     })
                   }
                   if (is) {
-                    if (index === 1 && types.isObjectExpression(argument)) {
-                      return block({
-                        argument,
-                        name: 'Soften.createAttribute',
-                        types,
-                      })
+                    if (types.isObjectExpression(argument)) {
+                      for (const view of argument.properties) {
+                        if (test(view.value) ||
+                          types.isExpression(view.value)) {
+                          view.value = block({
+                            argument: view.value,
+                            name: 'Soften.createAttribute',
+                            types,
+                          })
+                        }
+                      }
+                      return argument
                     }
                   }
                   return argument;
@@ -108,26 +119,11 @@ export default function SoftenJSX(): Plugin {
                 types.isIdentifier(callee.object, { name: "React" }) &&
                 types.isIdentifier(callee.property, { name: "createElement" })
               ) {
-                // 获取参数
-                const args = state(true);
-
-                const func = types.isIdentifier(path.node.arguments?.[0]) ||
-                  types.isMemberExpression(path.node.arguments?.[0]);
-                  
-                const util = types.arrowFunctionExpression(
-                  [],
-                  types.blockStatement([
-                    types.returnStatement(
-                      types.arrayExpression(
-                        args
-                      )
-                    )
-                  ])
-                );
+                const func = test(path.node.arguments?.[0]);
                 path.replaceWith(
                   types.callExpression(
                     types.identifier(func ? 'Soften.createComponent' : 'Soften.createElement'),
-                    func ? state(false) : [util]
+                    func ? state(false) : state(true)
                   )
                 )
               }
