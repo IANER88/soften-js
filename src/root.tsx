@@ -5,10 +5,10 @@ export default function Root() {
   const count = useSignal(0);
 
   const name = useSignal([
-    {
-      name: '一',
-      id: crypto.randomUUID(),
-    }
+    // {
+    //   name: '一',
+    //   id: crypto.randomUUID(),
+    // }
   ])
 
   useRecrudescence(() => {
@@ -35,6 +35,21 @@ export default function Root() {
     })
   }
 
+  const splice = () => {
+    name.value.splice(0, 0, {
+      name: 'splice',
+      id: crypto.randomUUID()
+    })
+  }
+
+  const pop = () => {
+    name.value.pop();
+  }
+
+  const clear = () => {
+    name.value.length = 0;
+  }
+
   return (
     <div id="id">
       <div style={{
@@ -45,18 +60,28 @@ export default function Root() {
             item => <div use:key={item.id}>{item.name}</div>
           )
         }
-        {
-          name.value.at(-1).name
-        }
+        {/* {
+          count.tabulate()
+        } */}
       </div>
       <div>
+        <div>
+          <span>数组</span>
+          <div>
+            <button on:click={push}>
+              push
+            </button>
+            <button on:click={unshift}>
+              unshift
+            </button>
+            <button on:click={splice}>splice</button>
+            <button on:click={pop}>pop</button>
+            <button on:click={clear}>clear</button>
+          </div>
+        </div>
         <button on:click={() => count.value++}>
           count: {count.value}
         </button>
-        <button on:click={push}>
-          push
-        </button>
-        <button on:click={unshift}>unshift</button>
       </div>
     </div>
   )

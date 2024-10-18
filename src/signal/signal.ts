@@ -83,8 +83,10 @@ class Signal<S> {
   }
 
   tabulate = (fn: (item: S extends (infer U)[] ? U : S, index: number) => unknown) => {
-    if (!(this.value instanceof Array)) return new Error('');
-    const list = () => [...this.value as []].map(fn);
+    if (!(this.value instanceof Array)) throw Error('is not array type');
+    const list = () => {
+      return [...this.value as []].map(fn)
+    };
     const observer = createTabulate(list);
     this.#observers.add({ subscriber: observer })
     return observer as unknown as Element;

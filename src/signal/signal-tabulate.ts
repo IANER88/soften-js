@@ -1,12 +1,23 @@
-class SignalTabulate {
+import lodash from 'lodash';
 
-  #root: HTMLElement[] | Comment;
+export default class SignalTabulate {
 
   #tabulate = () => HTMLElement;
 
+  #oldest: HTMLElement[] = [];
+
+  #latest: HTMLElement[] = [];
+
+  #generate = (latest) => {
+    return latest.map((item) => ({ key: item?.dataset?.key }))
+  }
+
   constructor(tabulate) {
-    this.#tabulate = tabulate;
-    this.#root = document.createComment('tabulate');
+    this.#tabulate = () => {
+      const latest = tabulate();
+      this.#latest = latest;
+      return latest;
+    }
   }
 
   #test = () => {
@@ -19,44 +30,62 @@ class SignalTabulate {
 
   once = () => {
     const node = this.#test();
-    this.#root = node as any;
+    this.#latest = node as any;
+    this.#oldest = this.#latest;
     return node;
   }
 
-  render = () => {
-    const fragment = this.#test();
-    if (fragment.length) {
-      // const max = Math.max(fragment.length, this.#root?.length);
-
-      // const tabulates = [];
-      // for (let site = 0; site < max; site++) {
-      //   const previous = this.#root[site];
-      //   const next = fragment[site];
-      //   let inter = previous;
-      //   const one = previous?.dataset?.key;
-      //   const two = next?.dataset?.key;
-      //   if (!Object.is(one, two)) {
-      //     if (!one) {
-      //       const last = this.#root.at(-1);
-      //       inter = next;
-      //       last.insertAdjacentElement('afterend', next)
-      //     }
-
-      //   }
-      //   tabulates.push(inter)
-      // }
-      // this.#root = tabulates;
+  #remove = () => {
+    const [latest, oldest] = [this.#latest, this.#oldest].map(this.#generate);
+    const diff = lodash.differenceBy(oldest, latest, 'key');
+    if (diff.length) {
+      const [old] = diff ?? []
+      const previous = oldest.findIndex((item) => item.key === old.key);
+      this.#oldest[previous].remove();
+      this.#oldest.splice(previous, diff.length);
     }
+  }
 
-    // if (this.#root instanceof Comment) {
-    //   /**
-    //    * 有值才能渲染
-    //    */
-    //   this.#root.replaceWith(...fragment);
-    //   this.#root = fragment;
-    //   return;
-    // }
+  #add = () => {
+    const [oldest, latest] = [this.#oldest, this.#latest].map(this.#generate);
+    const diff = lodash.differenceBy(latest, oldest, 'key');
+
+    if (diff.length) {
+      const [old] = diff ?? []
+      const previous = latest.findIndex((item) => item.key === old.key);
+      if (previous === 0) {
+        const next = this.#latest.at(previous);
+        if (next) {
+          this.#oldest[previous].insertAdjacentElement('beforebegin', next);
+          this.#oldest.splice(previous, 0, next);
+        }
+        return;
+      }
+      const next = this.#latest.at(previous);
+      if (next) {
+        this.#oldest[previous - 1].insertAdjacentElement('afterend', next);
+        this.#oldest.splice(previous - 1, 0, next);
+      }
+    }
+  }
+
+  render = () => {
+    const comment = this.#test();
+    if (this.#oldest instanceof Comment) {
+      this.#oldest.replaceWith(...this.#latest);
+      this.#oldest = this.#latest;
+      return;
+    }
+    if (!this.#latest.length) {
+      const diff = this.#oldest.slice(1, this.#oldest.length);
+      for (const node of diff) {
+        node.remove();
+      }
+      this.#oldest.at(0)?.replaceWith(comment as unknown as Comment);
+      this.#oldest = comment as Comment;
+      return;
+    }
+    this.#add();
+    this.#remove();
   }
 }
-
-export default SignalTabulate;

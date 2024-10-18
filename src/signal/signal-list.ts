@@ -6,6 +6,8 @@ class SignalList<S> extends Array {
   observers: Set<SignalTabulate>;
 
   constructor(initialState: S) {
+    console.log(initialState);
+    
     super(...initialState as []);
     this.observers = new Set();
   }
