@@ -20,10 +20,10 @@ export default function Root() {
       document.querySelector('#id')
     );
   })
-
+  let int = 0;
   const push = () => {
     name.value.push({
-      name: 'push',
+      name: int++,
       id: crypto.randomUUID(),
     })
   }

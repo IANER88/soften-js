@@ -64,7 +64,7 @@ export default class SignalTabulate {
       const next = this.#latest.at(previous);
       if (next) {
         this.#oldest[previous - 1].insertAdjacentElement('afterend', next);
-        this.#oldest.splice(previous - 1, 0, next);
+        this.#oldest.splice(previous, 0, next);
       }
     }
   }
