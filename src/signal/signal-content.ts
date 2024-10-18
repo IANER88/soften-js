@@ -2,18 +2,22 @@ export default class SignalContent {
 
   #root?: Comment | Element;
 
+  #latest?: null | number | false | string;
+
+  #oldest?: null | number | false | string;
+
   #test = (content) => {
+    this.#oldest = this.#latest;
     const node = [null, void 0, false].includes(content);
-    if (node) {
-      return document.createComment('content')
-    } else {
-      return document.createTextNode(content);
-    }
+    return node ? document.createComment('content') : document.createTextNode(content);
   }
 
   #content: () => false | null | string | number | void;
   constructor(content) {
-    this.#content = content;
+    this.#content = () => {
+      this.#latest = content();
+      return this.#latest;
+    };
   }
 
   once = () => {
@@ -23,8 +27,14 @@ export default class SignalContent {
   }
 
   render = () => {
-    const node = this.#test(this.#content());
-    this.#root?.replaceWith(node)
-    this.#root = node;
+    const latest = this.#content();
+    // this.#latest = latest;
+    console.log(this.#oldest, latest);
+
+    if (!Object.is(this.#oldest, latest)) {
+      const node = this.#test(latest);
+      this.#root?.replaceWith(node)
+      this.#root = node;
+    }
   }
 }

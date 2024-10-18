@@ -11,15 +11,26 @@ import SignalAttribute from './signal-attribute';
 import { createTabulate } from '@/util';
 
 export type Execute = {
-  subscriber: SignalContent | SignalComponent | SignalDetermine | SignalTabulate | SignalAttribute | null;
+  subscriber: SignalContent |
+  SignalComponent |
+  SignalDetermine |
+  SignalTabulate |
+  SignalAttribute |
+  null;
 };
-class Signal<S> {
+
+interface ISignal<S> {
+  value: S extends unknown[] ? SignalList<S> : S;
+}
+
+class Signal<S> implements ISignal<S> {
   value: S extends unknown[] ? SignalList<S> : S;
   #observers: Set<Execute>;
   #recrudescence: Set<{
     rely: () => void;
     deps: Set<Set<RecrudescenceFn>>;
   }>;
+
   constructor(initialState: S) {
 
     this.#observers = new Set();
@@ -60,23 +71,22 @@ class Signal<S> {
         get,
       });
     }
-
-    // const observer = (state) => {
-    //   if (state instanceof Object && state !== null) {
-    //     if (state instanceof Array) {
-    //       const signal: any = [];
-    //       for (const soften of state) signal.push(observer(soften))
-    //       return proxy(new SignalList(signal));
-    //     };
-    //     for (const value in state) {
-    //       state[value] = observer(state[value]);
-    //     }
-    //     return proxy(state);
-    //   }
-    //   return state;
-    // }
-    this.value = initialState instanceof Array ? proxy(new SignalList(initialState)) : initialState;
-
+    const observer = (state) => {
+      if (state instanceof Object && state !== null) {
+        if (state instanceof Array) {
+          const signal: any = [];
+          for (const soften of state) signal.push(observer(soften))
+          return proxy(new SignalList(signal));
+        };
+        for (const value in state) {
+          state[value] = observer(state[value]);
+        }
+        return proxy(state);
+      }
+      return state;
+    }
+    // this.value = initialState instanceof Array ? proxy(new SignalList(initialState)) : initialState;
+    this.value = observer(initialState);
     const signal = proxy(this)
 
     return signal;

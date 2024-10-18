@@ -1,5 +1,5 @@
 import { useMount, useRecrudescence, useSignal } from "./use"
-
+import './root.css'
 export default function Root() {
 
   const count = useSignal(0);
@@ -20,10 +20,9 @@ export default function Root() {
       document.querySelector('#id')
     );
   })
-  let int = 0;
   const push = () => {
     name.value.push({
-      name: int++,
+      name: 'push',
       id: crypto.randomUUID(),
     })
   }
@@ -50,39 +49,31 @@ export default function Root() {
     name.value.length = 0;
   }
 
+  const int = useSignal({
+    count: 0,
+    latest: 9,
+  })
+
+  console.log(int);
+  
+
   return (
-    <div id="id">
-      <div style={{
-        display: 'flex'
-      }}>
-        {
-          name.tabulate(
-            item => <div use:key={item.id}>{item.name}</div>
-          )
-        }
-        {/* {
-          count.tabulate()
-        } */}
-      </div>
-      <div>
-        <div>
-          <span>数组</span>
-          <div>
-            <button on:click={push}>
-              push
-            </button>
-            <button on:click={unshift}>
-              unshift
-            </button>
-            <button on:click={splice}>splice</button>
-            <button on:click={pop}>pop</button>
-            <button on:click={clear}>clear</button>
-          </div>
-        </div>
+    <div>
+      <h1>Vite + Solid</h1>
+      <div class="card">
         <button on:click={() => count.value++}>
-          count: {count.value}
+          count is {count.value}
+        </button>
+        <button on:click={() => int.value.count++}>
+          int: {int.value.count}
+        </button>
+        <button on:click={() => int.value.latest++} id={int.value.count}>
+          int latest: {int.value.latest}
         </button>
       </div>
+      <p class="read-the-docs">
+        {count.value}
+      </p>
     </div>
   )
 }
