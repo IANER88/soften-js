@@ -1,5 +1,4 @@
 import { RecrudescenceFn, getRecrudescence } from '../use/use-recrudescence';
-import SignalList from './signal-list';
 import { contents } from '@/util/create-content';
 import SignalContent from './signal-content';
 import SignalDetermine from './signal-determine';
@@ -19,12 +18,12 @@ export type Execute = {
   null;
 };
 
-interface ISignal<S> {
-  value: S extends unknown[] ? SignalList<S> : S;
-}
+type ISignal<S> =  {
+  value: S;
+};
 
 class Signal<S> implements ISignal<S> {
-  value: S extends unknown[] ? SignalList<S> : S;
+  value: S ;
   #observers: Set<Execute>;
   #recrudescence: Set<{
     rely: () => void;
@@ -38,7 +37,7 @@ class Signal<S> implements ISignal<S> {
 
     const set = (target: this, key: 'value', value) => {
       if (!Object.is(target[key], value)) {
-        target[key] = value;
+        target[key] = observer(value);
         for (const effect of [...this.#recrudescence]) {
           effect?.rely?.();
         }
@@ -72,11 +71,11 @@ class Signal<S> implements ISignal<S> {
       });
     }
     const observer = (state) => {
-      if (state instanceof Object && state !== null) {
+      if (state instanceof Object && state) {
         if (state instanceof Array) {
           const signal: any = [];
           for (const soften of state) signal.push(observer(soften))
-          return proxy(new SignalList(signal));
+          return proxy(signal);
         };
         for (const value in state) {
           state[value] = observer(state[value]);
@@ -85,7 +84,7 @@ class Signal<S> implements ISignal<S> {
       }
       return state;
     }
-    // this.value = initialState instanceof Array ? proxy(new SignalList(initialState)) : initialState;
+
     this.value = observer(initialState);
     const signal = proxy(this)
 

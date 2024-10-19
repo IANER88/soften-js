@@ -82,7 +82,7 @@ export default class SignalTabulate {
         node.remove();
       }
       this.#oldest.at(0)?.replaceWith(comment as unknown as Comment);
-      this.#oldest = comment as Comment;
+      this.#oldest = comment as any;
       return;
     }
     this.#add();

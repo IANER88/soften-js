@@ -28,9 +28,6 @@ export default class SignalContent {
 
   render = () => {
     const latest = this.#content();
-    // this.#latest = latest;
-    console.log(this.#oldest, latest);
-
     if (!Object.is(this.#oldest, latest)) {
       const node = this.#test(latest);
       this.#root?.replaceWith(node)

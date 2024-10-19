@@ -6,6 +6,7 @@ import { useReference } from "./use-reference";
 import useMemo from "./use-memo";
 import useDarkScheme from "./use-dark-scheme";
 import useImperativeReference from "./use-imperative-reference";
+import useId from './use-id'
 export {
   useSignal,
   useMount,
@@ -14,5 +15,6 @@ export {
   useMemo,
   useReference,
   useDarkScheme,
+  useId,
   useImperativeReference,
 }
