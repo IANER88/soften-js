@@ -14,7 +14,6 @@ export default function createAttribute(attribute) {
       attribute()
       const subscriber = new SignalAttribute(attribute);
       executes.subscriber = subscriber;
-
       return subscriber
     } finally {
       attributes.pop();

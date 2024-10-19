@@ -1,4 +1,4 @@
-import { RecrudescenceFn, getRecrudescence } from '../use/use-recrudescence';
+import { RecrudescenceFn, getRecrudescence } from '@/use/use-recrudescence';
 import { contents } from '@/util/create-content';
 import SignalContent from './signal-content';
 import SignalDetermine from './signal-determine';
@@ -18,22 +18,51 @@ export type Execute = {
   null;
 };
 
-type ISignal<S> =  {
+type ISignal<S> = {
   value: S;
 };
 
 class Signal<S> implements ISignal<S> {
-  value: S ;
-  #observers: Set<Execute>;
+
+  value: S;
+
+  #content: Set<Execute> = new Set();
+
+  #attribute: Set<Execute> = new Set();
+
+  #determine: Set<Execute> = new Set();
+
+  #tabulate: Set<Execute> = new Set();
+
   #recrudescence: Set<{
     rely: () => void;
     deps: Set<Set<RecrudescenceFn>>;
-  }>;
+  }> = new Set();
+
+  #subscribe = () => {
+    const observers = [
+      ...this.#attribute,
+      ...this.#content,
+      ...this.#tabulate,
+      ...this.#determine,
+    ];
+    for (const observer of observers) {
+      if (observer.subscriber) {
+        const contains = observer?.subscriber?.render?.();
+        if (!contains) {
+          if (observer.subscriber instanceof SignalAttribute)
+            this.#attribute.delete(observer);
+          if (observer.subscriber instanceof SignalTabulate)
+            this.#tabulate.delete(observer);
+          if (observer.subscriber instanceof SignalContent) {
+            this.#content.delete(observer)
+          }
+        }
+      };
+    }
+  }
 
   constructor(initialState: S) {
-
-    this.#observers = new Set();
-    this.#recrudescence = new Set();
 
     const set = (target: this, key: 'value', value) => {
       if (!Object.is(target[key], value)) {
@@ -41,9 +70,7 @@ class Signal<S> implements ISignal<S> {
         for (const effect of [...this.#recrudescence]) {
           effect?.rely?.();
         }
-        for (const observer of this.#observers) {
-          if (observer.subscriber) observer?.subscriber?.render?.();
-        }
+        this.#subscribe();
       }
       return true;
     };
@@ -58,9 +85,9 @@ class Signal<S> implements ISignal<S> {
       const content = contents.at(-1);
       const determine = determines.at(-1);
       const attribute = attributes.at(-1)
-      if (content) this.#observers.add(content);
-      if (determine) this.#observers.add(determine);
-      if (attribute) this.#observers.add(attribute);
+      if (content) this.#content.add(content);
+      if (determine) this.#determine.add(determine);
+      if (attribute) this.#attribute.add(attribute);
       return Reflect.get(target, key, receiver)
     }
 
@@ -97,7 +124,7 @@ class Signal<S> implements ISignal<S> {
       return [...this.value as []].map(fn)
     };
     const observer = createTabulate(list);
-    this.#observers.add({ subscriber: observer })
+    this.#tabulate.add({ subscriber: observer })
     return observer as unknown as Element;
   }
 }

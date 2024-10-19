@@ -1,3 +1,4 @@
+import { roots } from "@/util/create-root";
 export default class SignalContent {
 
   #root?: Comment | Element;
@@ -26,12 +27,21 @@ export default class SignalContent {
     return this.#root;
   }
 
+  #contains = () => {
+    const root = roots.at(-1);
+    const element = root?.root?.contains(this.#root as Element);
+    return element;
+  }
+
   render = () => {
     const latest = this.#content();
     if (!Object.is(this.#oldest, latest)) {
+      const element = this.#contains();
       const node = this.#test(latest);
       this.#root?.replaceWith(node)
       this.#root = node;
+      return element;
     }
+    return this.#contains();
   }
 }

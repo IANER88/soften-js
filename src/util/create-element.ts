@@ -12,8 +12,6 @@ export type Component = [
   children: [],
 ];
 
-export type SoftenComponent = (() => Component);
-
 export default function createElement(tag: string, attribute, ...children) {
   const execute = () => {
     const element = document.createElement(tag);

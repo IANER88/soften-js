@@ -1,3 +1,4 @@
+import { roots } from '@/util/create-root';
 import lodash from 'lodash';
 
 export default class SignalTabulate {
@@ -10,6 +11,12 @@ export default class SignalTabulate {
 
   #generate = (latest) => {
     return latest.map((item) => ({ key: item?.dataset?.key }))
+  }
+
+  #contains = (node) => {
+    const root = roots.at(-1);
+    const element = root?.root?.contains(node);
+    return element;
   }
 
   constructor(tabulate) {
@@ -74,7 +81,7 @@ export default class SignalTabulate {
     if (this.#oldest instanceof Comment) {
       this.#oldest.replaceWith(...this.#latest);
       this.#oldest = this.#latest;
-      return;
+      return false;
     }
     if (!this.#latest.length) {
       const diff = this.#oldest.slice(1, this.#oldest.length);
@@ -83,9 +90,10 @@ export default class SignalTabulate {
       }
       this.#oldest.at(0)?.replaceWith(comment as unknown as Comment);
       this.#oldest = comment as any;
-      return;
+      return false;
     }
     this.#add();
     this.#remove();
+    
   }
 }

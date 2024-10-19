@@ -4,7 +4,6 @@ import { Mount, mounts } from '@/use/use-mount';
 
 
 export default class SignalComponent {
-
   /**
    * 收集卸载
   */
@@ -24,7 +23,7 @@ export default class SignalComponent {
   }
 
   render = () => {
-    const element = this.#component();
+    const element = this.#component();    
     if (disentangles.length) {
       for (const disentangle of disentangles) {
         this.disentangles.add(disentangle)

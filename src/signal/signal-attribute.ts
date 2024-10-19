@@ -1,5 +1,6 @@
 import createEvent from "@/util/create-event";
 import SignalReference from "./signal-reference";
+import { roots } from "@/util/create-root";
 
 export default class SignalAttribute {
 
@@ -17,6 +18,12 @@ export default class SignalAttribute {
     this.#attribute = ''
   }
 
+  #contains = () => {
+    const root = roots.at(-1);
+    const element = root?.root?.contains(this.#root as Element);
+    return element;
+  }
+
   once = (root: HTMLElement, attribute) => {
     this.#attribute = attribute;
     this.#root = root;
@@ -32,7 +39,10 @@ export default class SignalAttribute {
         const value = this.#value();
         switch (this.#attribute) {
           case 'use:key':
-            this.render = () => this.#root.dataset.key = this.#value() as string;
+            this.render = () => {
+              this.#root.dataset.key = this.#value() as string;
+              return this.#contains();
+            };
             break;
           case 'use:reference':
             if (value instanceof SignalReference) {
@@ -40,16 +50,23 @@ export default class SignalAttribute {
             }
             break;
           case 'use:html':
-            this.render = () => this.#root.innerHTML = this.#value() as string;
+            this.render = () => {
+              this.#root.innerHTML = this.#value() as string;
+              return this.#contains();
+            }
             break;
           case 'use:text':
-            this.render = () => this.#root.innerHTML = this.#value() as string
+            this.render = () => {
+              this.#root.innerText = this.#value() as string;
+              return this.#contains();
+            }
             break;
           case 'value':
             this.render = () => {
               if (this.#root instanceof HTMLInputElement) {
                 this.#root.value = this.#value() as string;
-                this.#root.setAttribute(this.#attribute, this.#value() as string)
+                this.#root.setAttribute(this.#attribute, this.#value() as string);
+                return this.#contains();
               }
             }
 
@@ -61,10 +78,14 @@ export default class SignalAttribute {
                 this.#attribute,
                 Object.keys(value as {}).map((key) => `${key}:${(value as {})[key]}`).join(';')
               )
+              return this.#contains();
             }
             break;
           default:
-            this.render = () => this.#root.setAttribute(this.#attribute, this.#value() as string);
+            this.render = () => {
+              this.#root.setAttribute(this.#attribute, this.#value() as string)
+              return this.#contains();
+            };
 
         }
       }
