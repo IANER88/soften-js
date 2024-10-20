@@ -44,7 +44,7 @@ export default function SoftenJSX(): Plugin {
                       babel.types.identifier('Soften')
                     )
                   ],  // 使用 * 号导入
-                  babel.types.stringLiteral('@')
+                  babel.types.stringLiteral('@/utils')
                 )
               );
             },

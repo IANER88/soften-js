@@ -1,4 +1,4 @@
-import { roots } from '@/util/create-root';
+import { roots } from '@/utils/create-root';
 import lodash from 'lodash';
 
 export default class SignalTabulate {
@@ -79,6 +79,7 @@ export default class SignalTabulate {
   render = () => {
     const comment = this.#test();
     if (this.#oldest instanceof Comment) {
+      if (!this.#latest.length) return false;
       this.#oldest.replaceWith(...this.#latest);
       this.#oldest = this.#latest;
       return false;
@@ -94,6 +95,6 @@ export default class SignalTabulate {
     }
     this.#add();
     this.#remove();
-    
+    return this.#oldest.every(this.#contains)
   }
 }

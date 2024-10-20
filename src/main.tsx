@@ -1,4 +1,4 @@
-import { createRoot, useId } from ".";
+import { createRoot } from ".";
 import Root from "./root";
 createRoot(<Root />).mount('#app');
 

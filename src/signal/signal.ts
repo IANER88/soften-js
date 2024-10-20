@@ -1,13 +1,13 @@
 import { RecrudescenceFn, getRecrudescence } from '@/use/use-recrudescence';
-import { contents } from '@/util/create-content';
+import { contents } from '@/utils/create-content';
 import SignalContent from './signal-content';
 import SignalDetermine from './signal-determine';
-import { determines } from '@/util/create-determine';
+import { determines } from '@/utils/create-determine';
 import SignalComponent from './signal-component';
 import SignalTabulate from './signal-tabulate';
-import { attributes } from '@/util/create-attribute';
+import { attributes } from '@/utils/create-attribute';
 import SignalAttribute from './signal-attribute';
-import { createTabulate } from '@/util';
+import { createTabulate } from '@/utils';
 
 export type Execute = {
   subscriber: SignalContent |
@@ -54,9 +54,11 @@ class Signal<S> implements ISignal<S> {
             this.#attribute.delete(observer);
           if (observer.subscriber instanceof SignalTabulate)
             this.#tabulate.delete(observer);
-          if (observer.subscriber instanceof SignalContent) {
+          if (observer.subscriber instanceof SignalContent)
             this.#content.delete(observer)
-          }
+          // if (observer.subscriber instanceof SignalDetermine) {
+          //   this.#content.delete(observer)
+          // }
         }
       };
     }

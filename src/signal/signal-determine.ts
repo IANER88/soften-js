@@ -2,7 +2,7 @@ import { Disentangle } from "@/use/use-disentangle";
 import SignalComponent from "./signal-component";
 import SignalTabulate from "./signal-tabulate";
 import { JSX } from "@/types/jsx-runtime";
-import { roots } from "@/util/create-root";
+import { roots } from "@/utils/create-root";
 
 class SignalDetermine {
 
@@ -54,7 +54,6 @@ class SignalDetermine {
     const node = this.#test();
     const fragment = node instanceof SignalTabulate ?
       node.once() : node instanceof Array ? node : [node];
-    
     if (this.#root instanceof Array) {
       const app: any = this.#root.at(-1);
       for (const view of this.#root.slice(0, -1)) {
@@ -63,8 +62,8 @@ class SignalDetermine {
       app.replaceWith(...fragment as []);
       this.#root = fragment as any;
     } else {
-      (this.#root as Element).replaceWith(node as Element);
       const element = this.#contains(this.#root);
+      (this.#root as Element).replaceWith(node as Element);
       this.#root = node as any;
       return element;
     }

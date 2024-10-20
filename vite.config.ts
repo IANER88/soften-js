@@ -3,8 +3,7 @@ import { join } from 'path'
 import dts from 'vite-plugin-dts'
 import path from 'path';
 import soften from './soften';
-import compression from 'vite-plugin-compression'
-
+import { terser } from 'rollup-plugin-terser';
 export default defineConfig({
   plugins: [
     dts({
@@ -12,13 +11,6 @@ export default defineConfig({
       copyDtsFiles: true,
     }),
     soften(),
-    compression({
-      algorithm: 'gzip',
-      threshold: 10240, // 对大于 10KB 的文件进行压缩
-      verbose: true, // 是否在控制台输出压缩结果
-      ext: '.gz', // 压缩后文件的扩展名
-      deleteOriginFile: true, // 压缩后是否删除原文件
-    }),
   ],
   resolve: {
     alias: {
@@ -33,9 +25,19 @@ export default defineConfig({
       fileName: 'soften',
       formats: ['es', 'cjs'],
     },
+    minify: 'terser',
     rollupOptions: {
-      external: ['vite-plugin-soften'],
-    },
+      plugins: [
+        terser({
+          compress: {
+            drop_console: true,  // 移除 console.log
+          },
+          format: {
+            comments: false,  // 移除注释
+          },
+        })
+      ]
+    }
   },
 })
 

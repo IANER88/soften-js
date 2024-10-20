@@ -1,4 +1,4 @@
-import { Program } from "@/util/create-root";
+import { Program } from "@/utils/create-root";
 import SignalComponent from "./signal-component";
 
 export default class SignalRoot {
