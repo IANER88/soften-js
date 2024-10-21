@@ -116,7 +116,9 @@ export default function Root(){
 }
 ```
 ### 为何需要 .value
-因为 Soften 使用的观察发布模式，先使用 new Proxy 对状态进行一次劫持，当在初次组件渲染的时候 .value 就会收集当前的节点在 #observers 集合上，当 .value 修改状态的时候，就会遍历更新 #observers 上的节点
+因为 Soften 使用的观察发布模式，先使用 new Proxy 对状态进行一次劫持，~~当在初次组件渲染的时候 .value 就会收集当前的节点在 #observers 集合上，当 .value 修改状态的时候，就会遍历更新 #observers 上的节点~~
+
+当在初次渲染的时候，程序会收集 .value 状态绑定的节点，分别收集在当前 Signal 构造函数上的 #content、#attribute、#determine、#tabulate 上，当状态发生改变就会遍历更新节点
 ```ts
 /**类似代码**/
 const signal = new Proxy({
