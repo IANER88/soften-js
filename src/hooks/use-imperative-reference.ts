@@ -1,4 +1,4 @@
-import { Reference } from "@/use/use-reference";
+import { Reference } from "@/hooks/use-reference";
 
 type createReferences = () => ({});
 

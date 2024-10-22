@@ -1,4 +1,4 @@
-import { RecrudescenceFn, getRecrudescence } from '@/use/use-recrudescence';
+import { RecrudescenceFn, getRecrudescence } from '@/hooks/use-recrudescence';
 import { contents } from '@/utils/create-content';
 import SignalContent from './signal-content';
 import SignalDetermine from './signal-determine';

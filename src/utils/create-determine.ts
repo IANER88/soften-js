@@ -14,7 +14,7 @@ export default function createDetermine(condition: Condition) {
   const execute = () => {
     determines.push(executes);
     try {
-      condition()
+      condition();
       const subscriber = new SignalDetermine(condition);
       executes.subscriber = subscriber;
       return subscriber;

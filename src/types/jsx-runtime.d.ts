@@ -1,5 +1,5 @@
 import * as csstype from "csstype";
-import type Reference from '../use/use-reference'
+import type Reference from '../hooks/use-reference'
 /**
  * Based on JSX types for Surplus and Inferno and adapted for `dom-expressions`.
  *

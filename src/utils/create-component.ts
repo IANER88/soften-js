@@ -1,14 +1,17 @@
 import SignalComponent from "@/signal/signal-component";
 import { JSX } from "@/types/jsx-runtime";
-import { Reference } from "@/use/use-reference";
+import { Reference } from "@/hooks/use-reference";
 
-type Component = (props: {}, reference: Reference) => JSX.Element;
+
+export type Executes = { subscriber: SignalComponent | null }
+
+type Component = (props: {}, reference: Reference | void) => JSX.Element;
 
 type Props = {
-  ['use:reference']: Reference;
-  ['use:key']: number | string;
+  ['use:reference']?: Reference;
+  ['use:key']?: number | string;
 }
-
+export const components: Executes[] = [];
 export default function createComponent(component: Component, props: Props, ...children) {
 
   const {
@@ -17,16 +20,24 @@ export default function createComponent(component: Component, props: Props, ...c
     ...rest
   } = props ?? {};
 
+  const program = () => component(
+    Object.freeze({
+      ...rest,
+      children,
+    }),
+    reference
+  )
 
-  const element = new SignalComponent(
-    () => component(
-      {
-        ...rest,
-        children,
-      },
-      reference
-    )
-  );
-  
-  return element;
+  const execute = () => {
+    if (!components.length) components.push(executes);;
+    const element = new SignalComponent(program);
+    executes.subscriber = element;
+    return element;
+  }
+
+  const executes: Executes = {
+    subscriber: null,
+  }
+
+  return execute();
 }

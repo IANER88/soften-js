@@ -1,6 +1,5 @@
 import { Program } from "@/utils/create-root";
 import SignalComponent from "./signal-component";
-
 export default class SignalRoot {
   root?: Element;
   #program: Program;
@@ -15,7 +14,7 @@ export default class SignalRoot {
       const node = this.#program instanceof SignalComponent ?
         this.#program.render() :
         this.#program;
-      root?.append(node as Element);
+      root?.append((node instanceof SignalComponent ? node.render() : node) as Element);
       if (this.#program instanceof SignalComponent) {
         if (this.#program.mounts.size) for (const mount of this.#program.mounts) mount();
       }
