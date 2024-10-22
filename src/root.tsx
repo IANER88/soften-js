@@ -1,8 +1,6 @@
-import { useDisentangle, useId, useMount, useSignal } from "./hooks"
+import { useDisentangle, useId, useMount } from "./hooks"
 
 export default function Root() {
-
-  const show = useSignal(true)
 
   return (
     <About />
