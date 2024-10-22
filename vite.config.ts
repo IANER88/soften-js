@@ -10,7 +10,7 @@ export default defineConfig({
       include: ['src/**/*'],
       copyDtsFiles: true,
     }),
-    soften(),
+    // soften(),
   ],
   resolve: {
     alias: {
